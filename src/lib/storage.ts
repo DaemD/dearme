@@ -1,9 +1,10 @@
 // Browser persistence: IndexedDB ("zeneb-lite") behind a small interface, with an in-memory fallback.
 // Operations never throw to callers: a failed write is logged, and a store holding corrupt data is reset.
-import type { ChatMsg, DayLog, Graph } from "@shared/types"
+import type { ChatMsg, DayLog, Graph, JournalEntry } from "@shared/types"
 import { isGraph } from "./memory/graph"
 
 export const DB_NAME = "zeneb-lite"
+export const DB_VERSION = 2
 export const MAX_SNAPSHOTS = 30
 
 export type SettingKey = "aiName" | "lastSyncedAt" | "lastSavedAt"
@@ -30,6 +31,12 @@ export interface Storage {
   replaceDayLogs(logs: DayLog[]): Promise<void>
   getSetting(key: SettingKey): Promise<string | null>
   setSetting(key: SettingKey, value: string | null): Promise<void>
+  getJournal(localDate: string): Promise<JournalEntry | null>
+  putJournal(entry: JournalEntry): Promise<void>
+  /** Newest first. */
+  listJournals(): Promise<JournalEntry[]>
+  getJournalImage(localDate: string): Promise<string | null>
+  putJournalImage(localDate: string, dataUrl: string): Promise<void>
   clearAll(): Promise<void>
 }
 
@@ -65,6 +72,19 @@ function isSnapshot(v: unknown): v is SnapshotRecord {
   return !!s && typeof s === "object" && typeof s.at === "string" && isGraph(s.graph)
 }
 
+function isJournal(v: unknown): v is JournalEntry {
+  const j = v as JournalEntry
+  return !!j && typeof j === "object" && typeof j.localDate === "string" && Array.isArray(j.paragraphs) &&
+    typeof j.title === "string"
+}
+
+function isJournalImage(v: unknown): v is { localDate: string; dataUrl: string } {
+  const j = v as { localDate: string; dataUrl: string }
+  return !!j && typeof j === "object" && typeof j.localDate === "string" && typeof j.dataUrl === "string"
+}
+
+const byDateDesc = (a: JournalEntry, b: JournalEntry) => (a.localDate < b.localDate ? 1 : a.localDate > b.localDate ? -1 : 0)
+
 const clone = <T>(v: T): T => structuredClone(v)
 
 // ---------------------------------------------------------------- in-memory implementation
@@ -75,6 +95,8 @@ export function createMemoryStorage(): Storage {
   let snapshots: SnapshotRecord[] = []
   let dayLogs = new Map<string, DayLog>()
   let settings = new Map<string, string | null>()
+  let journals = new Map<string, JournalEntry>()
+  let journalImages = new Map<string, string>()
   return {
     kind: "memory",
     async loadMessages() {
@@ -114,7 +136,25 @@ export function createMemoryStorage(): Storage {
     async setSetting(key, value) {
       settings.set(key, value)
     },
+    async getJournal(date) {
+      const j = journals.get(date)
+      return j ? clone(j) : null
+    },
+    async putJournal(entry) {
+      journals.set(entry.localDate, clone(entry))
+    },
+    async listJournals() {
+      return [...journals.values()].map(clone).sort(byDateDesc)
+    },
+    async getJournalImage(date) {
+      return journalImages.get(date) ?? null
+    },
+    async putJournalImage(date, dataUrl) {
+      journalImages.set(date, dataUrl)
+    },
     async clearAll() {
+      journals = new Map()
+      journalImages = new Map()
       messages = new Map()
       graph = null
       snapshots = []
@@ -126,7 +166,7 @@ export function createMemoryStorage(): Storage {
 
 // ---------------------------------------------------------------- IndexedDB implementation
 
-const STORES = ["messages", "graph", "snapshots", "dayLogs", "settings"] as const
+const STORES = ["messages", "graph", "snapshots", "dayLogs", "settings", "journals", "journalImages"] as const
 type StoreName = (typeof STORES)[number]
 const GRAPH_KEY = "main"
 
@@ -147,14 +187,18 @@ function txDone(tx: IDBTransaction): Promise<void> {
 
 function openDb(factory: IDBFactory): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = factory.open(DB_NAME, 1)
+    const req = factory.open(DB_NAME, DB_VERSION)
     req.onupgradeneeded = () => {
+      // Additive only: every store that already exists (and its records) is left untouched.
       const db = req.result
-      db.createObjectStore("messages", { keyPath: "id" })
-      db.createObjectStore("graph")
-      db.createObjectStore("snapshots", { autoIncrement: true })
-      db.createObjectStore("dayLogs", { keyPath: "localDate" })
-      db.createObjectStore("settings")
+      const has = (name: string) => db.objectStoreNames.contains(name)
+      if (!has("messages")) db.createObjectStore("messages", { keyPath: "id" })
+      if (!has("graph")) db.createObjectStore("graph")
+      if (!has("snapshots")) db.createObjectStore("snapshots", { autoIncrement: true })
+      if (!has("dayLogs")) db.createObjectStore("dayLogs", { keyPath: "localDate" })
+      if (!has("settings")) db.createObjectStore("settings")
+      if (!has("journals")) db.createObjectStore("journals", { keyPath: "localDate" })
+      if (!has("journalImages")) db.createObjectStore("journalImages", { keyPath: "localDate" })
     }
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error ?? new Error("Could not open IndexedDB"))
@@ -258,6 +302,22 @@ function createIdbStorage(db: IDBDatabase): Storage {
         else tx.objectStore("settings").put(value, key)
         await txDone(tx)
       }),
+    getJournal: (date) =>
+      run("getJournal", null as JournalEntry | null, async () => {
+        const tx = db.transaction("journals", "readonly")
+        const value = await wrap(tx.objectStore("journals").get(date))
+        return isJournal(value) ? value : null
+      }),
+    putJournal: (entry) => run("putJournal", undefined, () => putOne("journals", entry)),
+    listJournals: () =>
+      run("listJournals", [] as JournalEntry[], async () => (await readValidated("journals", isJournal)).sort(byDateDesc)),
+    getJournalImage: (date) =>
+      run("getJournalImage", null as string | null, async () => {
+        const tx = db.transaction("journalImages", "readonly")
+        const value = await wrap(tx.objectStore("journalImages").get(date))
+        return isJournalImage(value) ? value.dataUrl : null
+      }),
+    putJournalImage: (date, dataUrl) => run("putJournalImage", undefined, () => putOne("journalImages", { localDate: date, dataUrl })),
     clearAll: () =>
       run("clearAll", undefined, async () => {
         const tx = db.transaction([...STORES], "readwrite")

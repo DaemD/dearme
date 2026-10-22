@@ -11,6 +11,26 @@ import { sanitiseLiveOps } from "./memory/sanitize"
 import { getStorage } from "./storage"
 import type { Storage } from "./storage"
 import { __resetSync, restoreIfEmpty, scheduleBackup } from "./sync"
+import {
+  __resetJournal,
+  __setJournalClock,
+  __setMessageGetter,
+  finaliseDueJournals,
+  getJournalDates as _getJournalDates,
+  getJournalEntry,
+  getJournalImage,
+  initJournal,
+  journalStatus,
+  lazyFetchImage,
+  refreshJournal as _refreshJournal,
+  retryJournalImage as _retryJournalImage,
+  saveJournalEdit as _saveJournalEdit,
+  scheduleDebounceRefresh,
+  subscribeJournal,
+} from "./journal"
+import type { JournalEntry } from "@shared/types"
+
+export interface JournalView { entry: JournalEntry; imageDataUrl: string | null }
 
 export const HISTORY_LIMIT = 20
 export const CONSOLIDATION_BACKOFF_MS = 15 * 60 * 1000
@@ -72,6 +92,7 @@ function notify(): void {
 /** Tests only: replace the clock. Pass null to restore the real one. */
 export function __setClock(fn: (() => Date) | null): void {
   clock = fn ?? (() => new Date())
+  __setJournalClock(fn)
 }
 
 /** Tests only: wait until every fire-and-forget task (learning, consolidation) has finished. */
@@ -170,7 +191,20 @@ async function doInit(): Promise<void> {
   dayLogs = new Map((await store.loadDayLogs()).map((l) => [l.localDate, l]))
   aiName = await store.getSetting("aiName")
   if (!hasEdges(graph)) await trySeed()
+  // Wire journal's message getter to this engine's message list
+  __setMessageGetter((date: string) =>
+    messages
+      .filter((m) => {
+        const d = new Date(m.createdAt)
+        const local = new Date(d.getTime() + 5 * 3600 * 1000)
+        return local.toISOString().slice(0, 10) === date
+      })
+      .slice(-80)
+      .map((m) => ({ id: m.id, role: m.role, content: m.content })),
+  )
+  await initJournal()
   track(maybeConsolidate())
+  track(finaliseDueJournals())
   notify()
 }
 
@@ -193,6 +227,7 @@ export async function resetLocalData(): Promise<void> {
   const store = await ensureStorage()
   await store.clearAll()
   __resetSync()
+  __resetJournal()
   messages = []
   graph = emptyGraph(clock())
   dayLogs = new Map()
@@ -202,6 +237,42 @@ export async function resetLocalData(): Promise<void> {
   consolidating = false
   backoffUntil = 0
   notify()
+}
+
+// ---------------------------------------------------------------- journal public API
+
+export { journalStatus, subscribeJournal }
+
+export function getJournalDates(): string[] {
+  const todayChatted = messages.some((m) => {
+    const d = new Date(m.createdAt)
+    const local = new Date(d.getTime() + 5 * 3600 * 1000)
+    return local.toISOString().slice(0, 10) === localDateStr(clock()) && m.role === "user"
+  })
+  return _getJournalDates(todayChatted)
+}
+
+export function getJournal(date: string): JournalView | null {
+  const entry = getJournalEntry(date)
+  if (!entry) return null
+  const imageDataUrl = getJournalImage(date) ?? null
+  // Lazy-fetch image if entry is finalised/ready but image not in memory
+  if (entry.imageStatus === "ready" && !imageDataUrl) {
+    void lazyFetchImage(date)
+  }
+  return { entry, imageDataUrl }
+}
+
+export async function refreshJournal(date?: string, opts?: { force?: boolean }): Promise<void> {
+  return _refreshJournal(date, opts)
+}
+
+export async function saveJournalEdit(date: string, paragraphs: string[], title?: string): Promise<void> {
+  return _saveJournalEdit(date, paragraphs, title)
+}
+
+export async function retryJournalImage(date: string): Promise<void> {
+  return _retryJournalImage(date)
 }
 
 // ---------------------------------------------------------------- chat
@@ -252,6 +323,7 @@ export async function sendMessage(text: string): Promise<{ user: ChatMsg; assist
   notify()
 
   track(learn(user, assistant))
+  scheduleDebounceRefresh()
   return { user, assistant }
 }
 

@@ -1,9 +1,10 @@
 import type { VercelResponse } from "@vercel/node"
-import type { SyncState } from "../shared/types"
+import type { JournalEntry, SyncState } from "../shared/types"
 import { safeEqual } from "./_lib/auth.js"
 import { clientKey, fail, headerOf, route } from "./_lib/http.js"
 import { recordFailure, recordSuccess, retryAfter } from "./_lib/ratelimit.js"
 import * as store from "./_lib/store.js"
+import { entryKey, readIndex } from "./journal-sync.js"
 
 const notFound = (res: VercelResponse) => fail(res, 404, "Not Found")
 
@@ -22,15 +23,30 @@ export default route(["GET"], async (req, res) => {
   if (!store.isConfigured()) return fail(res, 503, "Backup storage is not set up")
 
   const what = String(req.query?.what ?? "graph")
-  if (what !== "graph" && what !== "state") return fail(res, 400, "what must be graph or state")
-  let state: SyncState | null
+  if (what !== "graph" && what !== "state" && what !== "journals") return fail(res, 400, "what must be graph, state or journals")
+  let payload: unknown
   try {
-    const raw = await store.get(store.STATE_KEY)
-    state = raw ? (JSON.parse(raw) as SyncState) : null
+    if (what === "journals") {
+      const entries: JournalEntry[] = []
+      for (const date of await readIndex()) {
+        const raw = await store.get(entryKey(date))
+        if (!raw) continue
+        try {
+          entries.push(JSON.parse(raw) as JournalEntry)
+        } catch {
+          // skip an unreadable entry
+        }
+      }
+      entries.sort((a, b) => (a.localDate < b.localDate ? 1 : a.localDate > b.localDate ? -1 : 0))
+      payload = { entries }
+    } else {
+      const raw = await store.get(store.STATE_KEY)
+      const state = raw ? (JSON.parse(raw) as SyncState) : null
+      payload = what === "graph" ? (state?.graph ?? store.emptyGraph()) : state
+    }
   } catch {
     return fail(res, 502, "Backup storage is unavailable right now.")
   }
-  const payload = what === "graph" ? (state?.graph ?? store.emptyGraph()) : state
   if (String(req.query?.download ?? "") === "1") {
     res.setHeader("Content-Disposition", `attachment; filename="${what}.json"`)
   }

@@ -179,3 +179,68 @@ export interface SyncGetResponse {
 // GET /api/admin?what=graph|state   header X-Admin-Key (ADMIN_KEY env, 16+ chars)
 //   wrong or missing key -> 404 { detail: "Not Found" } (looks like it does not exist)
 //   what=graph (default) -> the Graph; what=state -> SyncState. Add &download=1 for a file download.
+
+// ───────────────────────── Daily journal ─────────────────────────
+// She just chats; one notebook page per day writes itself. The text is rewritten live while the day
+// goes on and is finished once the day is over, when the doodle is drawn (once per day, never again).
+
+export const JOURNAL_MOODS = ["happy", "calm", "tired", "sad", "stressed", "excited", "mixed"] as const
+export type JournalMood = (typeof JOURNAL_MOODS)[number]
+
+export interface JournalEntry {
+  localDate: string // YYYY-MM-DD, Lahore time
+  title: string // at most 60 characters
+  paragraphs: string[] // 1 to 6, first person ("Today I..."), at most 600 characters each
+  mood: JournalMood | null // only when she expressed it
+  scene: string // plain description of ONE gentle moment, used to draw the doodle (at most 240 characters)
+  caption: string // short caption under the doodle (at most 80 characters)
+  basedOnMessageId: string | null // newest chat message the text was written from
+  finalised: boolean // the day is over and this is the finished text
+  edited: boolean // she changed the text herself: it is never overwritten again
+  imageStatus: "none" | "drawing" | "ready" | "failed"
+  imageAttempts: number // drawing attempts so far (give up after 3)
+  updatedAt: string // ISO-8601 UTC
+}
+
+// POST /api/journal -> 200 JournalResponse | 400 | 401 | 502
+export interface JournalRequest {
+  localDate: string
+  final: boolean // true once the day is over (uses the stronger model)
+  messages: { id: string; role: "user" | "assistant"; content: string }[] // that day's messages, at most 80
+  previousParagraphs?: string[] // the current text, so a live rewrite stays stable
+}
+export interface JournalResponse {
+  title: string
+  paragraphs: string[]
+  mood: JournalMood | null
+  scene: string
+  caption: string
+}
+
+// POST /api/journal-image -> 200 JournalImageResponse | 400 | 401 | 429 (daily drawing limit) | 502
+export interface JournalImageRequest {
+  localDate: string
+  scene: string
+  caption?: string
+  mood?: JournalMood | null
+}
+export interface JournalImageResponse {
+  image: string // data URL, e.g. "data:image/png;base64,...."
+}
+
+// /api/journal-sync (backup of journal pages; each day is stored on its own, images included)
+// PUT  body JournalSyncPut -> 200 { savedAt } | 400 | 413 | 503
+// GET  -> 200 { dates: string[] }                                  (every day that has a backup)
+// GET  ?date=YYYY-MM-DD -> 200 { entry: JournalEntry | null, image: string | null }
+export interface JournalSyncPut {
+  entry: JournalEntry
+  image?: string | null // data URL, at most 250000 characters
+}
+export interface JournalSyncDates {
+  dates: string[]
+}
+export interface JournalSyncDay {
+  entry: JournalEntry | null
+  image: string | null
+}
+// GET /api/admin?what=journals (admin key) -> { entries: JournalEntry[] }

@@ -1,7 +1,8 @@
 // Typed fetch wrappers for the Vercel functions (contract: shared/types.ts). Login is not here.
 import type {
   ChatRequest, ChatResponse, ConsolidateRequest, ConsolidateResponse, ExtractRequest, ExtractResponse,
-  SeedResponse, SyncGetResponse, SyncState,
+  JournalImageRequest, JournalImageResponse, JournalRequest, JournalResponse, JournalSyncDates, JournalSyncDay,
+  JournalSyncPut, SeedResponse, SyncGetResponse, SyncState,
 } from "@shared/types"
 import { getToken, handleUnauthorized } from "./session"
 
@@ -64,4 +65,9 @@ export const api = {
   seed: () => request<SeedResponse>("GET", "/api/seed"),
   getSync: () => request<SyncGetResponse>("GET", "/api/sync"),
   putSync: (state: SyncState) => request<{ savedAt: string }>("PUT", "/api/sync", state),
+  journal: (body: JournalRequest) => request<JournalResponse>("POST", "/api/journal", body),
+  journalImage: (body: JournalImageRequest) => request<JournalImageResponse>("POST", "/api/journal-image", body),
+  journalPut: (body: JournalSyncPut) => request<{ savedAt: string }>("PUT", "/api/journal-sync", body),
+  journalDates: () => request<JournalSyncDates>("GET", "/api/journal-sync"),
+  journalDay: (date: string) => request<JournalSyncDay>("GET", `/api/journal-sync?date=${encodeURIComponent(date)}`),
 }

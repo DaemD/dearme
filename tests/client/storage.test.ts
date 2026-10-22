@@ -3,7 +3,7 @@ import { IDBFactory } from "fake-indexeddb"
 import { describe, expect, it } from "vitest"
 import type { ChatMsg, DayLog } from "../../shared/types"
 import { emptyGraph } from "../../src/lib/memory/graph"
-import { createMemoryStorage, openStorage } from "../../src/lib/storage"
+import { createMemoryStorage, DB_VERSION, openStorage } from "../../src/lib/storage"
 import type { Storage } from "../../src/lib/storage"
 
 const msg = (n: number, c = 1): ChatMsg => ({
@@ -102,7 +102,7 @@ describe("indexeddb persistence and corrupt data", () => {
     await s.saveMessage(msg(1))
     await s.saveGraph(emptyGraph())
     await new Promise<void>((resolve, reject) => {
-      const req = factory.open("zeneb-lite", 1)
+      const req = factory.open("zeneb-lite", DB_VERSION)
       req.onsuccess = () => {
         const db = req.result
         const tx = db.transaction(["graph", "messages"], "readwrite")

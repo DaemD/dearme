@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Menu, Sparkles } from "lucide-react"
+import { BookOpen, Menu, Sparkles } from "lucide-react"
 import { ChatComposer, ChatMessages, ChatProvider } from "@/components/ui/chat"
 import type { ChatMessageData, ChatUser } from "@/components/ui/chat"
 import { Backdrop } from "@/components/Backdrop"
@@ -8,6 +8,7 @@ import { getAiName, getMessages, initEngine, sendMessage, subscribe } from "@/li
 
 interface Props {
   onLogout: () => void
+  onOpenJournal: () => void
 }
 
 const ME: ChatUser = { id: "me", name: "Zeneb", status: "online" }
@@ -21,7 +22,7 @@ function greeting(): string {
   return "Hey, night owl"
 }
 
-export function ChatScreen({ onLogout }: Props) {
+export function ChatScreen({ onLogout, onOpenJournal }: Props) {
   // The engine owns the data; this counter just makes React read it again when it changes.
   const [, setTick] = useState(0)
   const refresh = () => setTick((n) => n + 1)
@@ -138,6 +139,14 @@ export function ChatScreen({ onLogout }: Props) {
               {waiting ? "typing..." : "online"}
             </span>
           </div>
+          <button
+            onClick={onOpenJournal}
+            className="rounded-xl p-1.5 text-[var(--chat-text-secondary)] hover:bg-[var(--chat-accent-soft)] flex-shrink-0"
+            aria-label="Open journal"
+            title="Journal"
+          >
+            <BookOpen className="size-5" />
+          </button>
         </header>
 
         <div className="relative flex min-h-0 flex-1 flex-col">

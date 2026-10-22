@@ -15,9 +15,6 @@
     "api/**/*.ts": {
       "maxDuration": 30,
       "includeFiles": "api/_data/**"
-    },
-    "api/journal-image.ts": {
-      "maxDuration": 60
     }
   }
 }

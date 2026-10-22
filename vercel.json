@@ -13,9 +13,6 @@
   ],
   "functions": {
     "api/**/*.ts": {
-      "maxDuration": 30
-    },
-    "api/seed.ts": {
       "maxDuration": 30,
       "includeFiles": "api/_data/**"
     },

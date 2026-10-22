@@ -663,9 +663,9 @@ function closePwModal(){$('pwOverlay').classList.remove('open');}
 async function checkPw(){
   const pw=$('pwInput').value; if(!pw){$('pwErr').textContent='Enter the password.';return;}
   try{
-    const r=await fetch('/api/content',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,content})});
+    const r=await fetch('/api/content',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,_checkOnly:true})});
     if(r.status===401){$('pwErr').textContent='Incorrect password.';$('pwInput').select();return;}
-    if(!r.ok){$('pwErr').textContent='Something went wrong.';return;}
+    if(!r.ok){const d=await r.json().catch(()=>({}));$('pwErr').textContent=d.error||'Something went wrong.';return;}
     editPassword=pw;closePwModal();enterEdit();
   }catch{$('pwErr').textContent='Network error.';}
 }

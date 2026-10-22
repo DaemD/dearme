@@ -12,13 +12,18 @@ function cfg() {
 async function rcommand(args: unknown[]): Promise<unknown> {
   const r = cfg()
   if (!r) return null
-  const res = await fetch(r.url, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${r.token}`, "Content-Type": "application/json" },
-    body: JSON.stringify(args),
-  })
-  const j = (await res.json()) as { result?: unknown }
-  return j.result ?? null
+  try {
+    const res = await fetch(r.url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${r.token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(args),
+    })
+    if (!res.ok) return null
+    const j = (await res.json()) as { result?: unknown }
+    return j.result ?? null
+  } catch {
+    return null
+  }
 }
 
 async function rget(key: string): Promise<string | null> {
@@ -39,33 +44,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Cache-Control", "no-store")
   res.setHeader("Access-Control-Allow-Origin", "*")
 
-  if (req.method === "GET") {
-    const raw = await rget(CONTENT_KEY)
-    let content = null
-    try { if (raw) content = JSON.parse(raw) } catch {}
-    res.json({ content })
-    return
-  }
-
-  if (req.method === "PUT") {
-    const body = req.body as Record<string, unknown>
-    if (!body || typeof body !== "object") { res.status(400).json({ error: "Bad request." }); return }
-    const { password, content } = body
-    if (typeof password !== "string" || password !== (await getPassword())) {
-      res.status(401).json({ error: "Incorrect password." }); return
+  try {
+    if (req.method === "GET") {
+      const raw = await rget(CONTENT_KEY)
+      let content = null
+      try { if (raw) content = JSON.parse(raw) } catch {}
+      res.json({ content })
+      return
     }
-    if (!content || typeof content !== "object" || Array.isArray(content)) {
-      res.status(400).json({ error: "Invalid content." }); return
-    }
-    if (!cfg()) { res.status(503).json({ error: "Storage not configured." }); return }
-    const mutable = { ...(content as Record<string, unknown>) }
-    const newPw = typeof mutable._newPassword === "string" ? mutable._newPassword : null
-    delete mutable._newPassword
-    await rset(CONTENT_KEY, JSON.stringify(mutable))
-    if (newPw && newPw.length >= 4) await rset(PASSWORD_KEY, newPw)
-    res.json({ ok: true })
-    return
-  }
 
-  res.status(405).end()
+    if (req.method === "PUT") {
+      const body = req.body as Record<string, unknown>
+      if (!body || typeof body !== "object") { res.status(400).json({ error: "Bad request." }); return }
+      const { password, content, _checkOnly } = body
+
+      const correct = await getPassword()
+      if (typeof password !== "string" || password !== correct) {
+        res.status(401).json({ error: "Incorrect password." }); return
+      }
+
+      // Password-only check — no save needed
+      if (_checkOnly) { res.json({ ok: true }); return }
+
+      if (!content || typeof content !== "object" || Array.isArray(content)) {
+        res.status(400).json({ error: "Invalid content." }); return
+      }
+      if (!cfg()) { res.status(503).json({ error: "Storage not configured." }); return }
+      const mutable = { ...(content as Record<string, unknown>) }
+      const newPw = typeof mutable._newPassword === "string" ? mutable._newPassword : null
+      delete mutable._newPassword
+      await rset(CONTENT_KEY, JSON.stringify(mutable))
+      if (newPw && newPw.length >= 4) await rset(PASSWORD_KEY, newPw)
+      res.json({ ok: true })
+      return
+    }
+
+    res.status(405).end()
+  } catch (err) {
+    console.error("[portfolio/content]", err)
+    res.status(500).json({ error: "Internal error." })
+  }
 }

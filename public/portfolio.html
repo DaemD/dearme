@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zeneb Sarwar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ──────────────────────────────────────── */
+    :root {
+      --bg:     #f7f5f1;
+      --card:   #ffffff;
+      --fg:     #1a1714;
+      --muted:  #7a7570;
+      --subtle: #afa9a3;
+      --accent: #1f5045;
+      --gold:   #b8895a;
+      --border: #e4dfd9;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:     #111210;
+        --card:   #1a1917;
+        --fg:     #f0ebe5;
+        --muted:  #9e9690;
+        --subtle: #5a5550;
+        --accent: #6daa8a;
+        --gold:   #d4a866;
+        --border: #2a2825;
+        color-scheme: dark;
+      }
+    }
+
+    /* ── Reset ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+      padding: 0 max(16px, env(safe-area-inset-left, 0px));
+      padding-right: max(16px, env(safe-area-inset-right, 0px));
+      transition: padding-top 0.2s;
+    }
+    body.edit-active { padding-top: 52px; }
+
+    /* ── Layout ──────────────────────────────────────── */
+    .site { max-width: 760px; margin: 0 auto; padding-block: 80px 140px; }
+
+    /* ── Typography ──────────────────────────────────── */
+    .display {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.6rem, 8vw, 4.2rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      text-wrap: balance;
+    }
+    .section-head {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.65rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+      margin-bottom: 28px;
+    }
+    .mono {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+
+    /* ── Divider ─────────────────────────────────────── */
+    hr { border: none; border-top: 1px solid var(--border); margin-block: 60px; }
+
+    /* ── Hero ────────────────────────────────────────── */
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .hero-tagline {
+      margin-top: 18px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-weight: 300;
+      max-width: 500px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 28px;
+      margin-top: 36px;
+    }
+    .meta-item {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .meta-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ── About ───────────────────────────────────────── */
+    .about-body {
+      font-size: 1.02rem;
+      line-height: 1.85;
+      max-width: 640px;
+    }
+    .about-body p + p { margin-top: 1em; }
+
+    /* ── Experience ──────────────────────────────────── */
+    .exp-list { display: flex; flex-direction: column; gap: 44px; }
+    .exp-item {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 0 32px;
+    }
+    @media (max-width: 520px) {
+      .exp-item { grid-template-columns: 1fr; }
+      .exp-date { text-align: left; margin-bottom: 10px; }
+    }
+    .exp-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.04em;
+      padding-top: 6px;
+      text-align: right;
+    }
+    .exp-body {
+      border-left: 2px solid var(--border);
+      padding-left: 22px;
+    }
+    .exp-co {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 2px;
+    }
+    .exp-role {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .exp-bullets li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding-left: 16px;
+      position: relative;
+    }
+    .exp-bullets li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--subtle);
+    }
+
+    /* ── Education ───────────────────────────────────── */
+    .edu-list { display: flex; flex-direction: column; gap: 28px; }
+    .edu-item { display: flex; gap: 18px; align-items: flex-start; }
+    .edu-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .edu-icon span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--accent);
+      letter-spacing: 0.03em;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .edu-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .edu-degree { font-size: 0.87rem; color: var(--muted); margin-top: 2px; }
+    .edu-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.67rem;
+      color: var(--subtle);
+      margin-top: 4px;
+    }
+
+    /* ── Skills ──────────────────────────────────────── */
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-chip {
+      font-size: 0.82rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 5px 13px;
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s;
+    }
+    .skill-chip:hover { border-color: var(--accent); color: var(--fg); }
+    .skill-del {
+      display: none;
+      cursor: pointer;
+      color: var(--subtle);
+      font-size: 1rem;
+      line-height: 1;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+    body.edit-active .skill-del { display: block; }
+    body.edit-active .skill-chip { border-style: dashed; }
+    .skill-add-form { display: none; margin-top: 6px; }
+    body.edit-active .skill-add-form { display: flex; gap: 8px; }
+    .skill-add-input {
+      padding: 5px 11px;
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      background: var(--card);
+      color: var(--fg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      outline: none;
+      width: 160px;
+    }
+    .skill-add-input:focus { border-color: var(--gold); }
+
+    /* ── Contact ─────────────────────────────────────── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .contact-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      background: var(--card);
+    }
+    .contact-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      margin-bottom: 5px;
+    }
+    .contact-val { font-size: 0.9rem; color: var(--fg); word-break: break-all; }
+    .copy-btn {
+      margin-top: 7px;
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      padding: 0;
+    }
+    .copy-btn:hover { opacity: 0.7; }
+
+    /* ── Edit mode inline ────────────────────────────── */
+    body.edit-active [contenteditable] {
+      outline: 1px dashed rgba(184,137,90,0.55);
+      border-radius: 3px;
+      outline-offset: 3px;
+    }
+    body.edit-active [contenteditable]:focus {
+      outline: 2px solid var(--gold);
+      background: rgba(184,137,90,0.06);
+    }
+    body.edit-active [contenteditable]:empty::before {
+      content: attr(data-ph);
+      color: var(--subtle);
+      font-style: italic;
+    }
+    .add-row {
+      display: none;
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--subtle);
+      cursor: pointer;
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      padding: 7px 14px;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .add-row:hover { border-color: var(--gold); color: var(--gold); }
+    body.edit-active .add-row { display: block; }
+    .bullet-del, .entry-del {
+      display: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--subtle);
+      font-size: 0.8rem;
+      margin-left: 6px;
+      padding: 0;
+    }
+    .bullet-del:hover, .entry-del:hover { color: #dc2626; }
+    body.edit-active .bullet-del, body.edit-active .entry-del { display: inline; }
+    body.edit-active .exp-item, body.edit-active .edu-item { position: relative; }
+    .entry-del { position: absolute; top: 0; right: 0; font-size: 0.75rem; }
+
+    /* ── Edit toolbar ────────────────────────────────── */
+    .edit-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--accent);
+      color: #fff;
+      height: 52px;
+      padding: 0 max(16px, env(safe-area-inset-left, 0px));
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 90;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+    }
+    body.edit-active .edit-bar { display: flex; }
+    .bar-actions { display: flex; gap: 8px; }
+    .btn-save {
+      padding: 7px 18px;
+      background: #fff;
+      color: var(--accent);
+      border: none;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-cancel {
+      padding: 7px 14px;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* ── FAB ─────────────────────────────────────────── */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: max(24px, env(safe-area-inset-right, 0px));
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 50;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.1);
+    }
+    body:hover .fab { opacity: 0.35; }
+    .fab:hover { opacity: 1 !important; }
+    body.edit-active .fab { display: none; }
+
+    /* ── Modals ──────────────────────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.38);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    }
+    .modal-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .modal-sub { font-size: 0.86rem; color: var(--muted); margin-bottom: 22px; }
+    .field-label {
+      font-size: 0.78rem;
+      color: var(--subtle);
+      margin-bottom: 5px;
+      display: block;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .text-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.94rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .text-input:focus { border-color: var(--accent); }
+    .field-err { color: #dc2626; font-size: 0.78rem; margin-top: 5px; min-height: 1em; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+    .btn-primary {
+      padding: 9px 22px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-ghost {
+      padding: 9px 16px;
+      background: none;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    /* ── Toast ───────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      right: max(24px, env(safe-area-inset-right, 0px));
+      background: var(--fg);
+      color: var(--bg);
+      padding: 9px 17px;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Change password link ────────────────────────── */
+    .change-pw-link {
+      display: none;
+      font-size: 0.78rem;
+      color: var(--subtle);
+      cursor: pointer;
+      margin-top: 16px;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: underline;
+    }
+    body.edit-active .change-pw-link { display: block; }
+
+    /* ── Misc button ─────────────────────────────────── */
+    .btn-xs {
+      padding: 5px 11px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+    }
+    .btn-xs:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Edit toolbar -->
+<div class="edit-bar" id="editBar">
+  <span>editing — click any text to change it</span>
+  <div class="bar-actions">
+    <button class="btn-cancel" id="cancelEdit">Discard</button>
+    <button class="btn-save" id="saveEdit">Save</button>
+  </div>
+</div>
+
+<!-- Page -->
+<main class="site">
+
+  <!-- Hero -->
+  <section>
+    <div class="hero-eyebrow" id="heroLocation">Lahore, Pakistan</div>
+    <h1 class="display" id="heroName">Zeneb Sarwar</h1>
+    <p class="hero-tagline" id="heroTagline">BBA Candidate · Business Strategy &amp; Marketing</p>
+    <div class="hero-meta">
+      <span class="meta-item"><span class="meta-dot"></span><span id="metaEmail">your@email.com</span></span>
+      <span class="meta-item"><span class="meta-dot"></span><span id="metaLinkedin">linkedin.com/in/zenebsarwar</span></span>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- About -->
+  <section>
+    <p class="mono" style="margin-bottom:14px">About</p>
+    <h2 class="section-head">A little about me</h2>
+    <div class="about-body" id="aboutBody">
+      <p>I'm a final-year BBA student at FAST NUCES Lahore with a keen interest in business strategy, marketing, and how organisations grow. I've had the chance to intern at some of Pakistan's most respected companies — PEL and PepsiCo — where I worked on real projects across commercial and marketing functions.</p>
+      <p>I enjoy working at the intersection of data and decisions, and I'm always looking for ways to contribute meaningfully to teams that care about doing things well.</p>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Experience -->
+  <section>
+    <p class="mono" style="margin-bottom:14px">Experience</p>
+    <h2 class="section-head">Where I've worked</h2>
+    <div class="exp-list" id="expList"></div>
+    <button class="add-row" id="addExp">+ Add experience</button>
+  </section>
+
+  <hr>
+
+  <!-- Education -->
+  <section>
+    <p class="mono" style="margin-bottom:14px">Education</p>
+    <h2 class="section-head">Academic background</h2>
+    <div class="edu-list" id="eduList"></div>
+    <button class="add-row" id="addEdu">+ Add education</button>
+  </section>
+
+  <hr>
+
+  <!-- Skills -->
+  <section>
+    <p class="mono" style="margin-bottom:14px">Skills &amp; Tools</p>
+    <h2 class="section-head">What I work with</h2>
+    <div class="skills-wrap" id="skillsWrap"></div>
+    <form class="skill-add-form" id="skillForm" onsubmit="return false">
+      <input class="skill-add-input" id="skillInput" placeholder="Add a skill…" maxlength="40">
+      <button class="btn-xs" type="button" id="skillAddBtn">Add</button>
+    </form>
+  </section>
+
+  <hr>
+
+  <!-- Contact -->
+  <section>
+    <p class="mono" style="margin-bottom:14px">Get in touch</p>
+    <h2 class="section-head">Let's connect</h2>
+    <div class="contact-grid" id="contactGrid"></div>
+    <button class="change-pw-link" id="changePwBtn">Change edit password</button>
+  </section>
+
+</main>
+
+<!-- FAB -->
+<button class="fab" id="fab" aria-label="Edit portfolio" title="Edit">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:var(--muted)">
+    <path d="M13.586 3.586a2 2 0 1 1 2.828 2.828L7 15.828l-3.828.828L4 12.828l9.586-9.242z"/>
+  </svg>
+</button>
+
+<!-- Password modal -->
+<div class="overlay" id="pwOverlay">
+  <div class="modal">
+    <div class="modal-title">Edit this page</div>
+    <div class="modal-sub">Enter the password to unlock editing.</div>
+    <label class="field-label" for="pwInput">Password</label>
+    <input class="text-input" type="password" id="pwInput" autocomplete="current-password">
+    <div class="field-err" id="pwErr"></div>
+    <div class="modal-btns">
+      <button class="btn-ghost" id="pwCancel">Cancel</button>
+      <button class="btn-primary" id="pwSubmit">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change-password modal -->
+<div class="overlay" id="cpOverlay">
+  <div class="modal">
+    <div class="modal-title">Change password</div>
+    <div class="modal-sub">The new password will be saved alongside your content.</div>
+    <label class="field-label" for="cpNew">New password</label>
+    <input class="text-input" type="password" id="cpNew" placeholder="at least 4 characters">
+    <div class="field-err" id="cpErr"></div>
+    <div class="modal-btns">
+      <button class="btn-ghost" id="cpCancel">Cancel</button>
+      <button class="btn-primary" id="cpSave">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Defaults (shown before content loads from the server) ──────
+  const DEFAULTS = {
+    name: "Zeneb Sarwar",
+    location: "Lahore, Pakistan",
+    tagline: "BBA Candidate · Business Strategy & Marketing",
+    about: "<p>I'm a final-year BBA student at FAST NUCES Lahore with a keen interest in business strategy, marketing, and how organisations grow. I've had the chance to intern at some of Pakistan's most respected companies — PEL and PepsiCo — where I worked on real projects across commercial and marketing functions.</p><p>I enjoy working at the intersection of data and decisions, and I'm always looking for ways to contribute meaningfully to teams that care about doing things well.</p>",
+    email: "your@email.com",
+    linkedin: "linkedin.com/in/zenebsarwar",
+    phone: "",
+    experience: [
+      { id: "e1", company: "PEL", fullName: "Pak Elektron Limited", role: "Business Development Intern", period: "Summer 2024",
+        bullets: ["Assisted in market analysis and commercial reporting.", "Worked with the sales team to track performance metrics and prepare insights."] },
+      { id: "e2", company: "PEPSI", fullName: "PepsiCo Pakistan", role: "Marketing Intern", period: "Summer 2023",
+        bullets: ["Supported campaign planning and on-ground execution.", "Contributed to consumer research and brand activation initiatives."] }
+    ],
+    education: [
+      { id: "ed1", institution: "FAST NUCES", fullName: "National University of Computer & Emerging Sciences",
+        degree: "Bachelor of Business Administration (BBA)", period: "2022 – Present", note: "7th Semester · Lahore Campus" }
+    ],
+    skills: ["Business Strategy","Market Research","Financial Analysis","Marketing","MS Excel","PowerPoint","Data Analysis","Team Leadership","Project Management"],
+    password: null
+  };
+
+  // ── State ──────────────────────────────────────────────────────
+  let content = JSON.parse(JSON.stringify(DEFAULTS));
+  let editPassword = null; // active session password (retrieved from server on unlock)
+  let isEditing = false;
+  let saving = false;
+
+  // ── Fetch content from server ──────────────────────────────────
+  async function loadContent() {
+    try {
+      const r = await fetch('/api/portfolio-content');
+      if (!r.ok) return;
+      const data = await r.json();
+      if (data && data.content && typeof data.content === 'object') {
+        content = { ...DEFAULTS, ...data.content };
+        renderAll();
+      }
+    } catch (e) {
+      // use defaults silently
+    }
+  }
+
+  // ── Render helpers ─────────────────────────────────────────────
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function mkId() { return Math.random().toString(36).slice(2, 8); }
+
+  function renderAll() {
+    $('heroName').textContent     = content.name;
+    $('heroLocation').textContent = content.location;
+    $('heroTagline').textContent  = content.tagline;
+    $('metaEmail').textContent    = content.email;
+    $('metaLinkedin').textContent = content.linkedin;
+    $('aboutBody').innerHTML      = content.about;
+    renderExp();
+    renderEdu();
+    renderSkills();
+    renderContact();
+    if (isEditing) attachEditables();
+  }
+
+  function renderExp() {
+    const list = $('expList');
+    list.innerHTML = '';
+    (content.experience || []).forEach(exp => {
+      const item = document.createElement('div');
+      item.className = 'exp-item';
+      item.dataset.expId = exp.id;
+      item.innerHTML = `
+        <div class="exp-date" data-field="period" data-parent="${exp.id}">${esc(exp.period)}</div>
+        <div class="exp-body">
+          <div class="exp-co"   data-field="company"  data-parent="${exp.id}">${esc(exp.company)}</div>
+          <div class="exp-role" data-field="role"     data-parent="${exp.id}">${esc(exp.role)}</div>
+          <ul class="exp-bullets">
+            ${(exp.bullets || []).map((b, i) => `
+              <li data-exp="${exp.id}" data-bidx="${i}">${esc(b)}<button class="bullet-del" data-bexp="${exp.id}" data-bidx="${i}">&times;</button></li>
+            `).join('')}
+          </ul>
+          <button class="add-row" data-add-bullet="${exp.id}">+ Add bullet</button>
+          <button class="entry-del" data-del-exp="${exp.id}">&times; remove</button>
+        </div>`;
+      list.appendChild(item);
+    });
+    list.querySelectorAll('.bullet-del').forEach(btn => btn.addEventListener('click', () => delBullet(btn.dataset.bexp, +btn.dataset.bidx)));
+    list.querySelectorAll('[data-add-bullet]').forEach(btn => btn.addEventListener('click', () => addBullet(btn.dataset.addBullet)));
+    list.querySelectorAll('[data-del-exp]').forEach(btn => btn.addEventListener('click', () => delExp(btn.dataset.delExp)));
+  }
+
+  function renderEdu() {
+    const list = $('eduList');
+    list.innerHTML = '';
+    (content.education || []).forEach(edu => {
+      const item = document.createElement('div');
+      item.className = 'edu-item';
+      item.dataset.eduId = edu.id;
+      item.innerHTML = `
+        <div class="edu-icon"><span>${esc(edu.institution)}</span></div>
+        <div style="flex:1;min-width:0">
+          <div class="edu-name"   data-field="fullName" data-parent="${edu.id}" data-type="edu">${esc(edu.fullName)}</div>
+          <div class="edu-degree" data-field="degree"   data-parent="${edu.id}" data-type="edu">${esc(edu.degree)}</div>
+          <div class="edu-meta"   data-field="note"     data-parent="${edu.id}" data-type="edu">${esc(edu.note)} &nbsp;&middot;&nbsp; <span data-field="period" data-parent="${edu.id}" data-type="edu">${esc(edu.period)}</span></div>
+          <button class="entry-del" data-del-edu="${edu.id}">&times; remove</button>
+        </div>`;
+      list.appendChild(item);
+    });
+    list.querySelectorAll('[data-del-edu]').forEach(btn => btn.addEventListener('click', () => delEdu(btn.dataset.delEdu)));
+  }
+
+  function renderSkills() {
+    const wrap = $('skillsWrap');
+    wrap.innerHTML = '';
+    (content.skills || []).forEach((sk, i) => {
+      const chip = document.createElement('span');
+      chip.className = 'skill-chip';
+      chip.innerHTML = `${esc(sk)}<button class="skill-del" data-ski="${i}">&times;</button>`;
+      wrap.appendChild(chip);
+    });
+    wrap.querySelectorAll('.skill-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        content.skills = content.skills.filter((_, j) => j !== +btn.dataset.ski);
+        renderSkills();
+      });
+    });
+  }
+
+  function renderContact() {
+    const grid = $('contactGrid');
+    grid.innerHTML = '';
+    const fields = [
+      { label: 'Email',    key: 'email',    val: content.email },
+      { label: 'LinkedIn', key: 'linkedin', val: content.linkedin },
+      ...(content.phone ? [{ label: 'Phone', key: 'phone', val: content.phone }] : []),
+    ];
+    fields.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'contact-card';
+      card.innerHTML = `
+        <div class="contact-label">${f.label}</div>
+        <div class="contact-val" data-contact="${f.key}">${esc(f.val)}</div>
+        <button class="copy-btn" data-copy="${f.key}">copy</button>`;
+      grid.appendChild(card);
+    });
+    grid.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = content[btn.dataset.copy] || '';
+        navigator.clipboard.writeText(val)
+          .then(() => showToast('Copied!'))
+          .catch(() => showToast('Select text manually.'));
+      });
+    });
+  }
+
+  // ── Edit mode ──────────────────────────────────────────────────
+  const SIMPLE_FIELDS = [
+    { id: 'heroName',    ph: 'Your name',       field: 'name' },
+    { id: 'heroLocation',ph: 'City, Country',   field: 'location' },
+    { id: 'heroTagline', ph: 'Your tagline…',   field: 'tagline' },
+    { id: 'metaEmail',   ph: 'your@email.com',  field: 'email' },
+    { id: 'metaLinkedin',ph: 'linkedin.com/in/…',field: 'linkedin' },
+  ];
+
+  function attachEditables() {
+    SIMPLE_FIELDS.forEach(({ id, ph, field }) => {
+      const el = $(id);
+      if (!el) return;
+      el.contentEditable = 'true';
+      el.dataset.ph = ph;
+      el.dataset.editField = field;
+    });
+    const about = $('aboutBody');
+    about.contentEditable = 'true';
+    about.dataset.ph = 'Write something about yourself…';
+    document.querySelectorAll('[data-field][data-parent]').forEach(el => {
+      el.contentEditable = 'true';
+      el.dataset.ph = el.dataset.field;
+    });
+  }
+
+  function detachEditables() {
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+      el.removeAttribute('contenteditable');
+    });
+  }
+
+  function enterEdit() {
+    isEditing = true;
+    document.body.classList.add('edit-active');
+    renderAll();
+  }
+
+  function exitEdit(save) {
+    if (save) {
+      collectAndSave();
+    } else {
+      isEditing = false;
+      document.body.classList.remove('edit-active');
+      detachEditables();
+      loadContent(); // reload from server to discard local changes
+    }
+  }
+
+  async function collectAndSave() {
+    if (saving) return;
+    saving = true;
+    $('saveEdit').disabled = true;
+    $('saveEdit').textContent = 'Saving…';
+    try {
+      // Simple text fields
+      SIMPLE_FIELDS.forEach(({ id, field }) => {
+        const el = $(id);
+        if (el) content[field] = el.innerText.trim();
+      });
+      // About paragraphs
+      const aboutEl = $('aboutBody');
+      if (aboutEl) {
+        let html = aboutEl.innerHTML;
+        if (!html.includes('<p>')) html = '<p>' + html + '</p>';
+        content.about = html;
+      }
+      // Exp fields
+      document.querySelectorAll('[data-field][data-parent]').forEach(el => {
+        const field  = el.dataset.field;
+        const pid    = el.dataset.parent;
+        const isEdu  = el.dataset.type === 'edu';
+        const list   = isEdu ? content.education : content.experience;
+        const entry  = list.find(e => e.id === pid);
+        if (entry) entry[field] = el.innerText.trim();
+      });
+      // Exp bullets
+      document.querySelectorAll('.exp-bullets li[data-exp]').forEach(li => {
+        const exp = content.experience.find(e => e.id === li.dataset.exp);
+        if (exp) exp.bullets[+li.dataset.bidx] = li.childNodes[0]?.textContent?.trim() || '';
+      });
+
+      const body = { password: editPassword, content };
+      const r = await fetch('/api/portfolio-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        showToast(data.detail || 'Save failed.');
+        return;
+      }
+      showToast('Saved.');
+      isEditing = false;
+      document.body.classList.remove('edit-active');
+      detachEditables();
+      renderAll();
+    } catch {
+      showToast('Network error — try again.');
+    } finally {
+      saving = false;
+      const btn = $('saveEdit');
+      if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+    }
+  }
+
+  // ── Experience mutations ───────────────────────────────────────
+  function addBullet(expId) {
+    const exp = content.experience.find(e => e.id === expId);
+    if (!exp) return;
+    exp.bullets.push('New point.');
+    renderExp(); attachEditables();
+    const all = document.querySelectorAll(`[data-exp="${expId}"][data-bidx]`);
+    const last = all[all.length - 1];
+    if (last) { last.contentEditable = 'true'; last.focus(); selectAll(last); }
+  }
+  function delBullet(expId, idx) {
+    const exp = content.experience.find(e => e.id === expId);
+    if (!exp || exp.bullets.length <= 1) return;
+    exp.bullets.splice(idx, 1);
+    renderExp(); if (isEditing) attachEditables();
+  }
+  function delExp(id) {
+    content.experience = content.experience.filter(e => e.id !== id);
+    renderExp(); if (isEditing) attachEditables();
+  }
+  function addExp() {
+    content.experience.push({ id: mkId(), company: 'COMPANY', fullName: 'Full Company Name', role: 'Your Role', period: 'Month YYYY', bullets: ['Describe what you did here.'] });
+    renderExp(); if (isEditing) attachEditables();
+  }
+  function delEdu(id) {
+    content.education = content.education.filter(e => e.id !== id);
+    renderEdu(); if (isEditing) attachEditables();
+  }
+  function addEdu() {
+    content.education.push({ id: mkId(), institution: 'UNIV', fullName: 'University Name', degree: 'Degree · Programme', period: 'YYYY – Present', note: '' });
+    renderEdu(); if (isEditing) attachEditables();
+  }
+  function selectAll(el) {
+    const r = document.createRange();
+    r.selectNodeContents(el);
+    const s = window.getSelection();
+    s && s.removeAllRanges(); s && s.addRange(r);
+  }
+
+  // ── Password flow ──────────────────────────────────────────────
+  function openPwModal() {
+    $('pwInput').value = '';
+    $('pwErr').textContent = '';
+    $('pwOverlay').classList.add('open');
+    setTimeout(() => $('pwInput').focus(), 50);
+  }
+  function closePwModal() { $('pwOverlay').classList.remove('open'); }
+
+  async function checkPw() {
+    const pw = $('pwInput').value;
+    if (!pw) { $('pwErr').textContent = 'Enter the password.'; return; }
+    // Test the password against the server
+    try {
+      const r = await fetch('/api/portfolio-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw, content }),
+      });
+      if (r.status === 401) {
+        $('pwErr').textContent = 'Incorrect password.';
+        $('pwInput').select();
+        return;
+      }
+      if (!r.ok) { $('pwErr').textContent = 'Something went wrong.'; return; }
+      editPassword = pw;
+      closePwModal();
+      enterEdit();
+    } catch {
+      $('pwErr').textContent = 'Network error.';
+    }
+  }
+
+  // ── Change-password modal ──────────────────────────────────────
+  function openCpModal() {
+    $('cpNew').value = '';
+    $('cpErr').textContent = '';
+    $('cpOverlay').classList.add('open');
+    setTimeout(() => $('cpNew').focus(), 50);
+  }
+  function closeCpModal() { $('cpOverlay').classList.remove('open'); }
+
+  async function savePw() {
+    const val = $('cpNew').value.trim();
+    if (val.length < 4) { $('cpErr').textContent = 'At least 4 characters required.'; return; }
+    try {
+      const newContent = { ...content, _newPassword: val };
+      const r = await fetch('/api/portfolio-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: editPassword, content: newContent }),
+      });
+      if (!r.ok) { $('cpErr').textContent = 'Save failed.'; return; }
+      // Now update server with new password in effect
+      editPassword = val;
+      showToast('Password updated.');
+      closeCpModal();
+    } catch {
+      $('cpErr').textContent = 'Network error.';
+    }
+  }
+
+  // ── Toast ──────────────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── Wire events ────────────────────────────────────────────────
+  $('fab').addEventListener('click', openPwModal);
+  $('pwCancel').addEventListener('click', closePwModal);
+  $('pwSubmit').addEventListener('click', checkPw);
+  $('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPw(); });
+  $('pwOverlay').addEventListener('click', e => { if (e.target === $('pwOverlay')) closePwModal(); });
+
+  $('saveEdit').addEventListener('click',   () => exitEdit(true));
+  $('cancelEdit').addEventListener('click', () => exitEdit(false));
+
+  $('addExp').addEventListener('click', addExp);
+  $('addEdu').addEventListener('click', addEdu);
+  $('changePwBtn').addEventListener('click', openCpModal);
+  $('cpCancel').addEventListener('click', closeCpModal);
+  $('cpSave').addEventListener('click',   savePw);
+  $('cpNew').addEventListener('keydown',  e => { if (e.key === 'Enter') savePw(); });
+  $('cpOverlay').addEventListener('click', e => { if (e.target === $('cpOverlay')) closeCpModal(); });
+
+  $('skillAddBtn').addEventListener('click', () => {
+    const val = $('skillInput').value.trim();
+    if (val && !content.skills.includes(val)) { content.skills.push(val); renderSkills(); }
+    $('skillInput').value = '';
+  });
+  $('skillInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); $('skillAddBtn').click(); }
+  });
+
+  // ── Boot ───────────────────────────────────────────────────────
+  renderAll();
+  loadContent();
+</script>
+</body>
+</html>

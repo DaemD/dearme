@@ -1,0 +1,236 @@
+/* Zeneb theme: orchid dusk. Soft violet and pink, glass panels, gentle motion.
+   Imported after index.css so these rules win over the stock chat themes. */
+
+:root {
+  --zeneb-gradient: linear-gradient(135deg, #8b5cf6 0%, #d946ef 55%, #ec4899 100%);
+  --zeneb-gradient-soft: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(236, 72, 153, 0.16));
+}
+
+html,
+body {
+  background-color: #fbf7ff;
+}
+html.dark,
+html.dark body {
+  background-color: #0d0a14;
+}
+
+/* ─── Tokens: light ───────────────────────────────────────────────── */
+[data-chat-theme="zeneb"] {
+  --chat-bg-app: #fbf7ff;
+  --chat-bg-sidebar: rgba(255, 255, 255, 0.62);
+  --chat-bg-main: rgba(255, 255, 255, 0.92);
+  --chat-bg-header: rgba(255, 255, 255, 0.55);
+  --chat-bg-composer: rgba(255, 255, 255, 0.55);
+  --chat-bg-content-card: rgba(255, 255, 255, 0.8);
+  --chat-bg-code: #f3edff;
+
+  --chat-bubble-outgoing: #8b5cf6;
+  --chat-bubble-outgoing-text: #ffffff;
+  --chat-bubble-incoming: rgba(255, 255, 255, 0.78);
+  --chat-bubble-incoming-text: #1f1633;
+
+  --chat-accent: #8b5cf6;
+  --chat-accent-soft: rgba(139, 92, 246, 0.1);
+  --chat-green: #22c55e;
+  --chat-orange: #f59e0b;
+  --chat-red: #ef4444;
+
+  --chat-text-primary: #1f1633;
+  --chat-text-secondary: #6b5f85;
+  --chat-text-tertiary: #a096ba;
+  --chat-border: rgba(91, 33, 182, 0.08);
+  --chat-border-strong: rgba(91, 33, 182, 0.15);
+
+  --chat-shadow-sm: 0 1px 2px rgba(91, 33, 182, 0.06);
+  --chat-shadow-md: 0 6px 18px rgba(91, 33, 182, 0.1);
+  --chat-shadow-lg: 0 18px 50px -12px rgba(91, 33, 182, 0.28);
+  --chat-shadow-toolbar: 0 2px 16px rgba(91, 33, 182, 0.18);
+
+  --chat-bubble-radius: 20px;
+  --chat-bubble-radius-grouped: 6px;
+  --chat-input-radius: 24px;
+
+  --zeneb-glass: rgba(255, 255, 255, 0.62);
+  --zeneb-glass-border: rgba(255, 255, 255, 0.75);
+  --zeneb-orb-opacity: 0.5;
+
+  --chat-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-family: var(--chat-font-sans);
+  color: var(--chat-text-primary);
+}
+
+/* ─── Tokens: dark ────────────────────────────────────────────────── */
+.dark [data-chat-theme="zeneb"],
+[data-chat-theme="zeneb"].dark {
+  --chat-bg-app: #0d0a14;
+  --chat-bg-sidebar: rgba(26, 19, 42, 0.7);
+  --chat-bg-main: rgba(22, 16, 36, 0.92);
+  --chat-bg-header: rgba(18, 13, 28, 0.55);
+  --chat-bg-composer: rgba(20, 14, 32, 0.55);
+  --chat-bg-content-card: rgba(30, 22, 48, 0.8);
+  --chat-bg-code: #1a1230;
+
+  --chat-bubble-outgoing: #a78bfa;
+  --chat-bubble-outgoing-text: #ffffff;
+  --chat-bubble-incoming: rgba(255, 255, 255, 0.07);
+  --chat-bubble-incoming-text: #f3eeff;
+
+  --chat-accent: #a78bfa;
+  --chat-accent-soft: rgba(167, 139, 250, 0.14);
+
+  --chat-text-primary: #f5f0ff;
+  --chat-text-secondary: #b3a8cc;
+  --chat-text-tertiary: #6f6489;
+  --chat-border: rgba(255, 255, 255, 0.07);
+  --chat-border-strong: rgba(255, 255, 255, 0.12);
+
+  --chat-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --chat-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --chat-shadow-lg: 0 20px 60px -12px rgba(0, 0, 0, 0.6);
+  --chat-shadow-toolbar: 0 2px 20px rgba(0, 0, 0, 0.5);
+
+  --zeneb-glass: rgba(28, 21, 44, 0.55);
+  --zeneb-glass-border: rgba(255, 255, 255, 0.09);
+  --zeneb-orb-opacity: 0.4;
+}
+
+/* ─── Chat bubbles ────────────────────────────────────────────────── */
+[data-chat-theme="zeneb"] .chat-bubble-out {
+  background-image: var(--zeneb-gradient);
+  box-shadow: 0 8px 20px -8px rgba(168, 85, 247, 0.65);
+}
+[data-chat-theme="zeneb"] .chat-bubble-in {
+  border: 1px solid var(--chat-border);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: var(--chat-shadow-sm);
+}
+
+/* Send button: gradient while there is something to send */
+[data-chat-theme="zeneb"] button[aria-label="Send message"][class*="bg-[var(--chat-accent)]"] {
+  background-image: var(--zeneb-gradient);
+  box-shadow: 0 6px 16px -4px rgba(168, 85, 247, 0.7);
+}
+
+/* ─── Reusable pieces ─────────────────────────────────────────────── */
+.zeneb-glass {
+  background: var(--zeneb-glass);
+  border: 1px solid var(--zeneb-glass-border);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  box-shadow: var(--chat-shadow-lg);
+}
+
+.zeneb-gradient-text {
+  background-image: var(--zeneb-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.zeneb-gradient-bg {
+  background-image: var(--zeneb-gradient);
+}
+
+.font-display {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+
+.zeneb-input {
+  background: color-mix(in srgb, var(--chat-bg-main) 70%, transparent);
+  border: 1px solid var(--chat-border-strong);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.zeneb-input:focus {
+  outline: none;
+  border-color: var(--chat-accent);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.18);
+}
+
+.zeneb-btn {
+  background-image: var(--zeneb-gradient);
+  color: #fff;
+  box-shadow: 0 12px 26px -12px rgba(168, 85, 247, 0.9);
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s, opacity 0.15s;
+}
+.zeneb-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 30px -12px rgba(168, 85, 247, 1);
+}
+.zeneb-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.99);
+}
+.zeneb-btn:disabled {
+  opacity: 0.5;
+}
+
+.zeneb-avatar {
+  background-image: var(--zeneb-gradient);
+  color: #fff;
+  box-shadow: 0 10px 28px -8px rgba(168, 85, 247, 0.75), inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+/* ─── Background glow ─────────────────────────────────────────────── */
+.zeneb-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: var(--zeneb-orb-opacity, 0.45);
+  animation: zeneb-float 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.zeneb-orb-a { background: #a78bfa; }
+.zeneb-orb-b { background: #f0abfc; }
+.zeneb-orb-c { background: #f9a8d4; }
+.dark .zeneb-orb-a { background: #6d28d9; }
+.dark .zeneb-orb-b { background: #a21caf; }
+.dark .zeneb-orb-c { background: #be185d; }
+
+@keyframes zeneb-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(40px, -30px, 0) scale(1.08); }
+  66% { transform: translate3d(-30px, 30px, 0) scale(0.95); }
+}
+
+@keyframes zeneb-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.zeneb-fade-up {
+  animation: zeneb-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes zeneb-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55); }
+  70% { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+.zeneb-online {
+  animation: zeneb-pulse 2.4s ease-out infinite;
+}
+
+/* ─── Scrollbars ──────────────────────────────────────────────────── */
+[data-chat-theme="zeneb"] * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+}
+[data-chat-theme="zeneb"] *::-webkit-scrollbar {
+  width: 8px;
+}
+[data-chat-theme="zeneb"] *::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.28);
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zeneb-orb,
+  .zeneb-fade-up,
+  .zeneb-online {
+    animation: none;
+  }
+}

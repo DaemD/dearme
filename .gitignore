@@ -1,0 +1,10 @@
+node_modules
+dist
+.vercel
+.env
+.env.*
+!.env.example
+*.local
+
+# private ground-truth data (starting facts about her): never commit
+api/_data/

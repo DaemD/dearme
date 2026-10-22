@@ -1,0 +1,341 @@
+[
+  {
+    "op": "add_node",
+    "type": "topic",
+    "name": "Profile"
+  },
+  {
+    "op": "add_node",
+    "type": "organisation",
+    "name": "FAST NUCES",
+    "aliases": [
+      "FAST",
+      "FAST University",
+      "NUCES"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "topic",
+    "name": "Academics",
+    "aliases": [
+      "studies",
+      "university"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "topic",
+    "name": "GPA medal",
+    "aliases": [
+      "gpa",
+      "cgpa",
+      "medal",
+      "discipline committee",
+      "disciplinary committee",
+      "discipline"
+    ],
+    "sensitivity": "sensitive"
+  },
+  {
+    "op": "add_node",
+    "type": "person",
+    "name": "Family",
+    "aliases": [
+      "family",
+      "parents",
+      "mom",
+      "mum",
+      "mother",
+      "dad",
+      "father",
+      "brother",
+      "sister",
+      "relatives"
+    ],
+    "sensitivity": "sensitive"
+  },
+  {
+    "op": "add_node",
+    "type": "person",
+    "name": "Dado",
+    "aliases": [
+      "grandmother",
+      "grandma"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "pet",
+    "name": "Luna",
+    "aliases": [
+      "cat"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "activity",
+    "name": "Golf"
+  },
+  {
+    "op": "add_node",
+    "type": "activity",
+    "name": "Gym",
+    "aliases": [
+      "workout",
+      "working out"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "place",
+    "name": "Aura Gym",
+    "aliases": [
+      "Aura"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "food",
+    "name": "Foodpanda orders",
+    "aliases": [
+      "Foodpanda",
+      "McDonald's",
+      "McDonalds",
+      "KFC",
+      "Domino's",
+      "Dominos",
+      "MyBox",
+      "twister",
+      "wrap",
+      "wraps"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "topic",
+    "name": "Period snacks",
+    "aliases": [
+      "period",
+      "periods",
+      "cramps",
+      "PMS",
+      "Hot Cheetos",
+      "Cheetos",
+      "KitKat",
+      "Kit Kat"
+    ],
+    "sensitivity": "sensitive"
+  },
+  {
+    "op": "add_node",
+    "type": "food",
+    "name": "Coffee",
+    "aliases": [
+      "breakfast"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "activity",
+    "name": "Movies",
+    "aliases": [
+      "movie",
+      "films",
+      "film"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "activity",
+    "name": "Music",
+    "aliases": [
+      "songs",
+      "playlist"
+    ]
+  },
+  {
+    "op": "add_node",
+    "type": "trait",
+    "name": "Impulsive"
+  },
+  {
+    "op": "add_node",
+    "type": "trait",
+    "name": "Emotional"
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Profile",
+    "type": "HAS_FULL_NAME",
+    "text": "Zeneb's full name is Zeneb Sarwar",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Profile",
+    "type": "BIRTHDAY",
+    "text": "Zeneb's birthday is on 19 April",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Profile",
+    "type": "AGE",
+    "text": "Zeneb is 24 years old (as of October 2026)",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "FAST NUCES",
+    "type": "STUDIES_AT",
+    "text": "Zeneb studies BBA at FAST NUCES in Lahore",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Academics",
+    "type": "STRONG_AT",
+    "text": "Zeneb is very smart and has a very high GPA",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "GPA medal",
+    "type": "SENSITIVE_TOPIC",
+    "text": "Zeneb has a very high GPA but did not get the medal for it because her name came up in the discipline committee. This is a sensitive topic for her. If the conversation goes there, motivate her: she is still very smart and her GPA is still high.",
+    "source_kind": "said",
+    "confidence": 1.0,
+    "sensitivity": "sensitive"
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Family",
+    "type": "FAMILY_RELATIONSHIP",
+    "text": "Zeneb's relationship with her family is sensitive. Don't bring it up and don't discuss it much; only go there if she takes the conversation there, then listen and follow her lead.",
+    "source_kind": "said",
+    "confidence": 1.0,
+    "sensitivity": "sensitive"
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Dado",
+    "type": "CLOSE_TO",
+    "text": "Zeneb is close to her grandmother, whom she calls Dado",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Luna",
+    "type": "HAS_PET",
+    "text": "Zeneb has a white Persian cat called Luna, whom she loves taking care of",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Golf",
+    "type": "LEARNING",
+    "text": "Zeneb just started playing golf with her dad",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Gym",
+    "type": "GOES_TO",
+    "text": "Zeneb goes to the gym every day, usually after 8-9pm PKT, and tries to be back before 11pm",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Aura Gym",
+    "type": "GYM_LOCATION",
+    "text": "Zeneb goes to Aura Gym in Askari 11, Lahore",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Foodpanda orders",
+    "type": "LOVES",
+    "text": "Zeneb loves ordering food from Foodpanda; her go-to orders are McDonald's wraps, KFC twisters and Domino's MyBox",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Period snacks",
+    "type": "PREFERS",
+    "text": "When Zeneb is on her period she prefers snacks like Hot Cheetos and loves KitKat a lot",
+    "source_kind": "said",
+    "confidence": 1.0,
+    "sensitivity": "sensitive"
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Coffee",
+    "type": "HABIT",
+    "text": "Zeneb makes her own breakfast and most of the time drinks coffee with it",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Movies",
+    "type": "LOVES",
+    "text": "Zeneb loves watching movies; it is a good way to keep her engaged in conversation",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Music",
+    "type": "LOVES",
+    "text": "Zeneb loves listening to music; it is a good way to keep her engaged in conversation",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Impulsive",
+    "type": "TRAIT",
+    "text": "Zeneb is a bit impulsive at times, so help her slow down and think before she acts",
+    "source_kind": "said",
+    "confidence": 1.0
+  },
+  {
+    "op": "add_fact",
+    "source": "zeneb",
+    "target": "Emotional",
+    "type": "TRAIT",
+    "text": "Zeneb is very emotional; be gentle and caring with her feelings",
+    "source_kind": "said",
+    "confidence": 1.0
+  }
+]

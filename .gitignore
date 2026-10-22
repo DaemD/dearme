@@ -6,5 +6,6 @@ dist
 !.env.example
 *.local
 
-# private ground-truth data (starting facts about her): never commit
-api/_data/
+# the one-line env copy of the seed is only for pasting into Vercel; api/_data/seed.json IS committed
+# (so keep this repository PRIVATE)
+api/_data/seed.env.txt
